@@ -1,0 +1,2 @@
+2024-12-01 15:56:28 | WARNING | django.request | Not Found: /docs/
+2024-12-01 15:56:28 | WARNING | django.server | "GET /docs/ HTTP/1.1" 404 2765
