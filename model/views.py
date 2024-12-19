@@ -7,7 +7,9 @@ from django.db.models import Q
 from loguru import logger as loguru_logger
 from common.customresponse import CustomResponse
 from common.custommodelviewset import CustomModelViewSet
-import shutil
+import shutil, requests, hashlib, json
+from django.conf import settings
+from task.queue.tasks import add_task
 
 
 class NetworkView(CustomModelViewSet):
@@ -254,7 +256,14 @@ class WeightView(CustomModelViewSet):
             for weight_id in weight_ids.split(","):
                 weight_instance = weightHub.objects.get(weight_id=weight_id)
                 weight_instance.delete()
-                os.remove(weight_instance.weight_path)
+                weight_path = os.path.join(
+                    get_config("storage", "storage_path"),
+                    "weights",
+                    weight_instance.weight_type,
+                    weight_id + ".pth",
+                )
+                if os.path.exists(weight_path):
+                    os.remove(weight_path)
         except weightHub.DoesNotExist as e:
             return CustomResponse(
                 data="Failed to delete weight: {}".format(str(e)),
@@ -312,4 +321,65 @@ class NetworkWeightView(CustomModelViewSet):
 
         return CustomResponse(
             data=return_data, code=200, msg="success", status=status.HTTP_200_OK
+        )
+
+
+class CloudWeightView(CustomModelViewSet):
+    serializer_class = CloudWeightSerializer
+
+    def list(self, request, *args, **kwargs):
+        cloud_url = "https://phenotools.phenonet.org/weights.json"
+        try:
+            response = requests.get(cloud_url)
+            current_version = json.load(
+                open(os.path.join(settings.BASE_DIR, "version.json"))
+            )
+        except Exception as e:
+            return CustomResponse(
+                data=[],
+                code=500,
+                msg=f"Failed to get cloud weights: {str(e)}",
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        weights = response.json()
+
+        for weight in weights:
+            if weight["support_version"] != current_version["server_version"]:
+                weight["support_version"] = False
+            else:
+                weight["support_version"] = True
+
+        return CustomResponse(
+            data=weights, code=200, msg="success", status=status.HTTP_200_OK
+        )
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        try:
+            weightHub.objects.create(
+                weight_name=data["weight_name"],
+                weight_id=data["weight_id"],
+                network_id=data["network_id"],
+                weight_path=os.path.join(
+                    get_config("storage", "storage_path"),
+                    "weights",
+                    data["weight_type"],
+                    data["weight_id"] + ".pth",
+                ),
+                weight_type=data["weight_type"],
+                create_time=timezone.now().strftime("%Y-%m-%d %H:%M"),
+                description=data["description"],
+            )
+        except Exception as e:
+            return CustomResponse(
+                data=[],
+                code=500,
+                msg=f"Failed to write to database: {str(e)}",
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        return CustomResponse(
+            data=[],
+            code=200,
+            msg="success",
+            status=status.HTTP_200_OK,
         )

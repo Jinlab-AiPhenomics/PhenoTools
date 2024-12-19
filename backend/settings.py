@@ -33,16 +33,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
     "corsheaders",
     "system",
     "task",
-    "file",
     "dataset",
     "model",
     "rest_framework",
@@ -56,7 +51,6 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -92,9 +86,9 @@ DATABASES = {
 }
 
 DJANGO_HUEY = {
-    "default": "add_task",  # this name must match with any of the queues defined below.
+    "default": "add_task",
     "queues": {
-        "add_task": {  # this name will be used in decorators below
+        "add_task": {
             "huey_class": "huey.SqliteHuey",
             "name": "add_tasks",
             "connection": {"filename": "queue.sqlite3"},
@@ -103,9 +97,9 @@ DJANGO_HUEY = {
             "consumer": {
                 "workers": 1,
                 "worker_type": "thread",
-                "periodic": True,
-                "check_worker_health": True,  # Enable worker health checks.
-                "health_check_interval": 1,  # Check worker health every second.
+                "periodic": False,
+                "check_worker_health": True,
+                "health_check_interval": 3,
             },
         },
     },
@@ -187,7 +181,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "handlers": {
         "file": {
-            "level": "WARNING",
+            "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "logs", "web", "system.log"),
             "maxBytes": 300 * 1024 * 1024,
@@ -196,27 +190,19 @@ LOGGING = {
             "encoding": "utf-8",
         },
         "console": {
-            "level": "WARNING",
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "standard",
         },
     },
     "formatters": {
         "standard": {
-            "format": "%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-            "datefmt": "%Y-%m-%d %H:%M:%S",
-        },
-        "simple": {
-            "format": "[%(levelname)s]> %(message)s",
+            "format": "%(asctime)s - %(levelname)s - %(message)s",
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },
-    "loggers": {
-        "django": {
-            "handlers": ["file", "console"],
-            "level": "INFO",
-            "propagate": True,
-            "formatter": "verbose",
-        },
+    "root": {
+        "handlers": ["file", "console"],
+        "level": "INFO",
     },
 }

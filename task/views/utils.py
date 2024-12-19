@@ -104,46 +104,6 @@ class TaskLogView(CustomModelViewSet):
             )
         ):
             pass
-            # val_folders = os.listdir(
-            #     os.path.join(
-            #         get_config("storage", "storage_path"),
-            #         "experiments",
-            #         "{}".format(request.GET.get("task_id")),
-            #         "visualization",
-            #     )
-            # )
-            # if len(val_folders) > 0:
-            #     # 选择val文件夹下的第一个文件夹下的图片
-            #     visual_imgs = []
-            #     for img in os.listdir(
-            #         os.path.join(
-            #             get_config("storage", "storage_path"),
-            #             "experiments",
-            #             "{}".format(request.GET.get("task_id")),
-            #             "visualization",
-            #             val_folders[0],
-            #         )
-            #     ):
-            #         visual_imgs.append(
-            #             os.path.join(
-            #                 get_config("storage", "storage_path"),
-            #                 "experiments",
-            #                 "{}".format(request.GET.get("task_id")),
-            #                 "visualization",
-            #                 val_folders[0],
-            #                 img,
-            #             )
-            #         )
-            #     visual_imgs = sorted(
-            #         visual_imgs, key=lambda x: int(x.split("_")[-1].split(".")[0])
-            #     )
-            #     for i in visual_imgs:
-            #         logs["visual_imgs"].append(
-            #             {
-            #                 "img_name": os.path.basename(i),
-            #                 "img_url": i,
-            #             }
-            #         )
         # 图像预测
         elif request.GET.get("t") == "sr":
             visual_imgs = []

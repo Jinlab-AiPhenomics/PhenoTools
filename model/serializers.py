@@ -9,7 +9,7 @@ class NetworkSerializer(serializers.Serializer):
     network_type = serializers.CharField()
     description = serializers.CharField(default="")
     create_time = serializers.DateTimeField(
-        default=timezone.now().strftime("%Y-%m-%d %H:%M")
+        default=timezone.now().strftime("%Y-%m-%d %H:%M:%S")
     )
 
     class Meta:
@@ -25,7 +25,7 @@ class WeightSerializer(serializers.Serializer):
     scale = serializers.IntegerField(default=4)
     description = serializers.CharField(default="")
     create_time = serializers.DateTimeField(
-        default=timezone.now().strftime("%Y-%m-%d %H:%M")
+        default=timezone.now().strftime("%Y-%m-%d %H:%M:%S")
     )
 
     def create(self, validated_data):
@@ -40,6 +40,12 @@ class NetworkWeightSerializer(serializers.Serializer):
     network_name = serializers.CharField()
     weight_id = serializers.CharField()
     weight_name = serializers.CharField()
+
+    class Meta:
+        fields = "__all__"
+
+
+class CloudWeightSerializer(serializers.Serializer):
 
     class Meta:
         fields = "__all__"
