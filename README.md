@@ -51,8 +51,6 @@ A user-friendly tool for breeders to extract organ-level phenotypic traits from 
 
 4. Data management
 
-5. OpenAPI
-
 ## ⚙️ Download Setup
 
 ### 1. Install the interface software
@@ -60,6 +58,8 @@ A user-friendly tool for breeders to extract organ-level phenotypic traits from 
 Please download the latest version of the executable file from the <a href="https://github.com/Jinlab-AiPhenomics/phenotools/releases">Releases</a> page.
 
 ### 2. Install the computation server with Conda
+
+#### 2.1 Install from source code
 
 1. Please install Anaconda firstly.
 
@@ -74,7 +74,7 @@ Please download the latest version of the executable file from the <a href="http
 3. Create a clear environment for PhenoTools and activate the environment.
 
    ```python
-   conda create -n phenotools python=3.8
+   conda create -n phenotools python=3.9
    conda activate phenotools
    ```
 4. Install Python requirements.
@@ -83,9 +83,35 @@ Please download the latest version of the executable file from the <a href="http
    pip install -r requirements.txt
    ```
 
+#### 2.2 Install from PyPI
+
+Coming soon...
+
 ## 🚀 Usage 
 
-Please visit https://help.phenonet.org/ to access usage documents.
+> Please visit https://help.phenonet.org/ to access more usage documents.
+
+### 1. Install from source code
+
+```python
+cd {your folder}
+cd PhenoTools
+
+# activate the virtual env
+conda activate phenotools
+# run the computation server
+python R.py
+
+# open a new command window
+# activate the virtual env
+conda activate phenotools
+# run the queue server
+python Q.py
+```
+
+### 2. Install from PyPI
+
+Coming soon...
 
 ## 🙏 Acknowledgement
 
